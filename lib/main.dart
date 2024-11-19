@@ -1,118 +1,93 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
-//constants
-const String esp_name = "ESP32";
-//app
-void main() async {
-
-  runApp(MyApp());
+void main() {
+  runApp(const MyApp());
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-  @override
-  State <MyApp> createState() =>  MyAppState();
-}
-
-class MyAppState extends State<MyApp> {
-  StartBlue startBlue = StartBlue();
-
-  @override
-  void initState() {
-    super.initState();
-    startBlue.scanBlueDevices(); // Start scanning in initState
-  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: StreamBuilder<List<ScanResult>>(
-            stream: FlutterBluePlus.scanResults,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator(); // Show a loading indicator while scanning
-              }
-
-              if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              }
-
-              if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return Text('No devices found');
-              }
-
-              final devices = snapshot.data!;
-
-              return ListView.builder(
-                itemCount: devices.length,
-                itemBuilder: (context, index) {
-                  var deviceName = devices[index].device.platformName.isNotEmpty
-                      ? devices[index].device.platformName
-                      : 'Unknown';
-
-                  return ListTile(
-                    title: Text(deviceName),
-                  );
-                },
-              );
-            },
-          ),
-        ),
-      ),
+      home: PairedDevicesScreen(),
     );
   }
 }
 
-
-
-
-
-
-class StartBlue {
-  List<ScanResult> devices = [];
-  Function()? onDevicesUpdated; // Callback to notify UI updates
-
-
-
-  Future<void> scanBlueDevices() async {
-
-  if (Platform.isAndroid) {
-    await FlutterBluePlus.turnOn(); // Request the user to turn on Bluetooth
+class PairedDevicesScreen extends StatefulWidget {
+  @override
+  _PairedDevicesScreenState createState() => _PairedDevicesScreenState();
 }
 
+class _PairedDevicesScreenState extends State<PairedDevicesScreen> {
+  List<BluetoothDevice> _pairedDevices = [];
+  bool _isLoading = true;
 
-    // Listen to scan results
-    var subscription = FlutterBluePlus.scanResults.listen((results) {
-      if (results.isNotEmpty) {
-        devices.clear(); // Clear to avoid duplicates
-        devices.addAll(results);
+  @override
+  void initState() {
+    super.initState();
+    _fetchPairedDevices();
+  }
 
-        if (onDevicesUpdated != null) {
-          onDevicesUpdated!(); // Call the callback when new data is available
-        }
+  /// Fetch paired devices and update the UI
+  Future<void> _fetchPairedDevices() async {
+    try {
+      // Ensure Bluetooth is supported
+      if (await FlutterBluePlus.isSupported == false) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Bluetooth is not supported on this device.")),
+        );
+        return;
       }
-    }, onError: (e) => print(e));
 
-    // Cleanup: cancel subscription when scanning stops
-    FlutterBluePlus.cancelWhenScanComplete(subscription);
+      // Wait for Bluetooth to be turned on
+      await FlutterBluePlus.adapterState
+          .where((state) => state == BluetoothAdapterState.on)
+          .first;
 
-    // Wait for Bluetooth enabled & permission granted
-    await FlutterBluePlus.adapterState.where((val) => val == BluetoothAdapterState.on).first;
+      // Retrieve bonded (paired) devices
+      List<BluetoothDevice> bondedDevices = await FlutterBluePlus.bondedDevices;
 
-    // Start scanning with a timeout
-    await FlutterBluePlus.startScan(
-      withNames: [esp_name], // Match any of the specified names
-      timeout: Duration(seconds: 80),
+      setState(() {
+        _pairedDevices = bondedDevices;
+        _isLoading = false;
+      });
+    } catch (e) {
+      print("Error fetching paired devices: $e");
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Paired Bluetooth Devices")),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _pairedDevices.isEmpty
+              ? const Center(child: Text("No paired devices found."))
+              : ListView.builder(
+                  itemCount: _pairedDevices.length,
+                  itemBuilder: (context, index) {
+                    BluetoothDevice device = _pairedDevices[index];
+                    return ListTile(
+                      title: Text(device.platformName.isNotEmpty
+                          ? device.platformName
+                          : "Unknown Device"),
+                      subtitle: Text("ID: ${device.remoteId}"),
+                      onTap: () async {
+                        // Handle device selection (e.g., connect to the device)
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Selected: ${device.platformName}")),
+                        );
+                      },
+                    );
+                  },
+                ),
     );
-
-    // Wait for scanning to stop
-    await FlutterBluePlus.isScanning.where((val) => val == false).first;
   }
 }
