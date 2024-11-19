@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'dart:convert';
 
+ int printValue = 0;
+
 void main() {
   runApp(const MyApp());
 }
@@ -135,7 +137,7 @@ class _DeviceDetailsScreenState extends State<DeviceDetailsScreen> {
 
       // Discover services and characteristics
       List<BluetoothService> services = await widget.device.discoverServices();
-      int printValue = 0;
+     
 
       // Look for a specific characteristic for receiving data (e.g., RX characteristic)
       for (var service in services) {
@@ -156,6 +158,7 @@ class _DeviceDetailsScreenState extends State<DeviceDetailsScreen> {
 
 
                 _receivedData.add((printValue).toString());
+                
                 
                 
               });
@@ -188,24 +191,44 @@ class _DeviceDetailsScreenState extends State<DeviceDetailsScreen> {
           ? const Center(child: CircularProgressIndicator())
           : !_isConnected
               ? const Center(child: Text("Failed to connect to the device."))
-              : Column(
+              : Center( child: Column(
+                
                   children: [
                     const Text("Received Data:", style: TextStyle(fontWeight: FontWeight.bold)),
                     Expanded(
-                      child: ListView.builder(
-                        itemCount: _receivedData.length,
-                        itemBuilder: (context, index) {
+                      child:
+                      Column(
+                        
+
+                        children: [
                           
-                          return ListTile(
+
+                             Icon(
+                            Icons.favorite_outline,
+                            color: Color.fromARGB(255, 231, 61, 61),
+
+                          ),
+
+                          Text(
                             
-                         
-                            title: Text(_receivedData[index]),
-                          );
-                        },
-                      ),
+                            
+                            
+                            printValue.toString())
+
+
+                        ],
+
+
+
+
+                      )
+
+                     
+                      
+                      
                     ),
                   ],
-                ),
+                ),),
     );
   }
 }
