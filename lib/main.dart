@@ -191,42 +191,142 @@ class _DeviceDetailsScreenState extends State<DeviceDetailsScreen> {
           ? const Center(child: CircularProgressIndicator())
           : !_isConnected
               ? const Center(child: Text("Failed to connect to the device."))
-              : Center( child: Column(
+              : Center( 
+                
+                child: Column(
                 
                   children: [
                     const Text("Received Data:", style: TextStyle(fontWeight: FontWeight.bold)),
-                    Expanded(
-                      child:
+
+
+                    ///1ST CONTAINER
+                    Padding( padding: EdgeInsets.all(10) , 
+                    
+                    child: Row( children: [
+
+
+                      Expanded(child: 
+
+
+                     Container(
+
+                        padding: EdgeInsets.all(10),
+                        
+                        margin: EdgeInsets.only(right: 10, left: 10, bottom: 10, top: 10) ,
+                        
+
+                        width: 80,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 120, 65, 169),
+
+                          borderRadius: BorderRadius.circular(10.0),  // Circular border radius for all corners
+  
+                        ),
+                     ),
+                    ),
+
+
+
+
+               ///2ND CONTAINER
+                  Expanded(
+                    child: 
+
+                      Container(
+
+                        padding: EdgeInsets.all(10),
+                        margin: EdgeInsets.all(10) ,
+                        
+
+                        width: 80,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 120, 65, 169),
+
+                          borderRadius: BorderRadius.circular(10.0),  // Circular border radius for all corners
+  
+                        ),
+
+                        
+                        
+
+
+                        
+
+                        child: 
+                      
                       Column(
                         
 
                         children: [
                           
+                         
 
                              Icon(
                             Icons.favorite_outline,
-                            color: Color.fromARGB(255, 231, 61, 61),
+                            color: Color.fromARGB(255, 255, 255, 255),
+                            size: 30,
 
                           ),
 
                           Text(
+                         
+                            printValue.toString(),
                             
-                            
-                            
-                            printValue.toString())
+                            style: 
+                            TextStyle(
 
+                              color: Color.fromARGB(255, 255, 255, 255),
+                              fontSize: 25,
+
+
+
+
+
+                            ),
+                            
+                            )
 
                         ],
-
-
-
-
                       )
+               
+                      
+                      
+                    ),),
+                    
+                    //3RD CONTAINER
+                    Expanded(
+                      child: 
+                     Container(
 
-                     
-                      
-                      
+                        padding: EdgeInsets.all(10),
+                        
+                        margin: EdgeInsets.only(right: 10, left: 10, bottom: 10, top: 10) ,
+                        
+
+                        width: 80,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 120, 65, 169),
+
+                          borderRadius: BorderRadius.circular(10.0),  // Circular border radius for all corners
+  
+                        ),
+                     ),
                     ),
+
+
+
+
+
+
+
+
+
+
+                                ]              ),)
+                    
                   ],
                 ),),
     );
