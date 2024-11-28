@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'dart:convert';
+import 'dart:convert'; 
 
- int printValue = 0;
+
+
+///widgets
+import "widgets.dart";
+import 'boxes.dart';
+import 'batteryrow.dart';
+
+int printValue = 0;
 
 void main() {
   runApp(const MyApp());
@@ -40,7 +47,8 @@ class _PairedDevicesScreenState extends State<PairedDevicesScreen> {
       // Ensure Bluetooth is supported
       if (await FlutterBluePlus.isSupported == false) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Bluetooth is not supported on this device.")),
+          const SnackBar(
+              content: Text("Bluetooth is not supported on this device.")),
         );
         return;
       }
@@ -101,7 +109,6 @@ class _PairedDevicesScreenState extends State<PairedDevicesScreen> {
   }
 }
 
-
 //the other screen
 
 class DeviceDetailsScreen extends StatefulWidget {
@@ -116,8 +123,7 @@ class DeviceDetailsScreen extends StatefulWidget {
 class _DeviceDetailsScreenState extends State<DeviceDetailsScreen> {
   BluetoothCharacteristic? _rxCharacteristic;
   List<String> _receivedData = [];
-  
-  
+
   var lastData = '';
   bool _isConnecting = true;
   bool _isConnected = false;
@@ -134,38 +140,29 @@ class _DeviceDetailsScreenState extends State<DeviceDetailsScreen> {
       await widget.device.connect();
       setState(() => _isConnected = true);
 
-
       // Discover services and characteristics
       List<BluetoothService> services = await widget.device.discoverServices();
-     
 
       // Look for a specific characteristic for receiving data (e.g., RX characteristic)
       for (var service in services) {
         for (var characteristic in service.characteristics) {
-          
-            _rxCharacteristic = characteristic;
+          _rxCharacteristic = characteristic;
 
-            // Set up a listener to receive data
-            _rxCharacteristic!.lastValueStream.listen((value) {
-              setState(() {
+          // Set up a listener to receive data
+          _rxCharacteristic!.lastValueStream.listen((value) {
+            setState(() {
+              if (value.length == 4) {
+                printValue = value[0] |
+                    (value[1] << 8) |
+                    (value[2] << 16) |
+                    (value[3] << 24);
+              }
 
-                if( value.length == 4){
-
-                 printValue = value[0] | (value[1] << 8) | (value[2] << 16) | (value[3] << 24);
-
-                                  }
-
-
-
-                _receivedData.add((printValue).toString());
-                
-                
-                
-              });
+              _receivedData.add((printValue).toString());
             });
+          });
 
-            await _rxCharacteristic!.setNotifyValue(true);
-          
+          await _rxCharacteristic!.setNotifyValue(true);
         }
       }
     } catch (e) {
@@ -183,6 +180,7 @@ class _DeviceDetailsScreenState extends State<DeviceDetailsScreen> {
     super.dispose();
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -191,144 +189,19 @@ class _DeviceDetailsScreenState extends State<DeviceDetailsScreen> {
           ? const Center(child: CircularProgressIndicator())
           : !_isConnected
               ? const Center(child: Text("Failed to connect to the device."))
-              : Center( 
-                
-                child: Column(
-                
-                  children: [
-                    const Text("Received Data:", style: TextStyle(fontWeight: FontWeight.bold)),
+              : Center(
+                  child: Column(
+                    children: [          
 
-
-                    ///1ST CONTAINER
-                    Padding( padding: EdgeInsets.all(10) , 
-                    
-                    child: Row( children: [
-
-
-                      Expanded(child: 
-
-
-                     Container(
-
-                        padding: EdgeInsets.all(10),
-                        
-                        margin: EdgeInsets.only(right: 10, left: 10, bottom: 10, top: 10) ,
-                        
-
-                        width: 80,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 120, 65, 169),
-
-                          borderRadius: BorderRadius.circular(10.0),  // Circular border radius for all corners
-  
-                        ),
-                     ),
-                    ),
-
-
-
-
-               ///2ND CONTAINER
-                  Expanded(
-                    child: 
-
-                      Container(
-
-                        padding: EdgeInsets.all(10),
-                        margin: EdgeInsets.all(10) ,
-                        
-
-                        width: 80,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 120, 65, 169),
-
-                          borderRadius: BorderRadius.circular(10.0),  // Circular border radius for all corners
-  
-                        ),
-
-                        
-                        
-
-
-                        
-
-                        child: 
+                      RowWidget(printValue, printValue, printValue),  
+                      RowBattery(printValue),          
                       
-                      Column(
-                        
-
-                        children: [
-                          
-                         
-
-                             Icon(
-                            Icons.favorite_outline,
-                            color: Color.fromARGB(255, 255, 255, 255),
-                            size: 30,
-
-                          ),
-
-                          Text(
-                         
-                            printValue.toString(),
-                            
-                            style: 
-                            TextStyle(
-
-                              color: Color.fromARGB(255, 255, 255, 255),
-                              fontSize: 25,
-
-
-
-
-
-                            ),
-                            
-                            )
-
-                        ],
-                      )
-               
+                      GaugeWidget(printValue.toDouble()),
                       
-                      
-                    ),),
-                    
-                    //3RD CONTAINER
-                    Expanded(
-                      child: 
-                     Container(
-
-                        padding: EdgeInsets.all(10),
-                        
-                        margin: EdgeInsets.only(right: 10, left: 10, bottom: 10, top: 10) ,
-                        
-
-                        width: 80,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 120, 65, 169),
-
-                          borderRadius: BorderRadius.circular(10.0),  // Circular border radius for all corners
-  
-                        ),
-                     ),
-                    ),
-
-
-
-
-
-
-
-
-
-
-                                ]              ),)
-                    
-                  ],
-                ),),
+                      //here put other code to the column
+                    ],
+                  ),
+                ),
     );
   }
 }

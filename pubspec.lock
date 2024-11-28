@@ -165,6 +165,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.9.0"
+  percent_indicator:
+    dependency: "direct main"
+    description:
+      name: percent_indicator
+      sha256: c37099ad833a883c9d71782321cb65c3a848c21b6939b6185f0ff6640d05814c
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.2.3"
   permission_handler:
     dependency: "direct main"
     description:
@@ -258,6 +266,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
+  syncfusion_flutter_core:
+    dependency: transitive
+    description:
+      name: syncfusion_flutter_core
+      sha256: "225b1cc135549bb4eef096d63b7323c30ee61c4b095c7e8a14bf9333e243d84b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "27.2.2"
+  syncfusion_flutter_gauges:
+    dependency: "direct main"
+    description:
+      name: syncfusion_flutter_gauges
+      sha256: "179bcb8838e54c7bd0d52263326f551ffc4e8935aa02a390f47588dada6f483f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "27.2.2"
   term_glyph:
     dependency: transitive
     description:
