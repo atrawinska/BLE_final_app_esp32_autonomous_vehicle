@@ -16,7 +16,7 @@ class BatteryWidget extends StatelessWidget {
        
             child: 
             Padding(
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
 
 
               child: 
@@ -25,8 +25,8 @@ class BatteryWidget extends StatelessWidget {
             
             LinearPercentIndicator(
       animation: true,
-      progressColor: Color.fromARGB(255, 120, 65, 169),
-      barRadius: Radius.circular(10),
+      progressColor: const Color.fromARGB(255, 120, 65, 169),
+      barRadius: const Radius.circular(10),
 
       ///change to battery value
       percent: printValue / 10 > 1 ? printValue / 100 : printValue / 10,
@@ -35,7 +35,7 @@ class BatteryWidget extends StatelessWidget {
       lineHeight: 50,
       width: 150,
 
-      center: Icon(
+      center: const Icon(
         Icons.battery_charging_full_sharp,
         color: Color.fromARGB(255, 255, 255, 255),
         size: 30,
@@ -63,12 +63,12 @@ class BatteryText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
         return Padding(
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         child: Text(
           
           (printValue / 10).toString(),
-          style: TextStyle(fontWeight: FontWeight.bold),
-          selectionColor: Color.fromARGB(255, 3, 3, 3),
+          style: const TextStyle(fontWeight: FontWeight.bold),
+          selectionColor: const Color.fromARGB(255, 3, 3, 3),
         ));
 
   }

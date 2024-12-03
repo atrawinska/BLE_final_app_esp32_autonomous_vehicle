@@ -11,13 +11,13 @@ class GaugeWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Padding(
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         ///gauge
         SfRadialGauge(
           enableLoadingAnimation: true,
-          backgroundColor: Color.fromARGB(0, 255, 255, 255),
-          title: GaugeTitle(text: "Current speed"),
+          backgroundColor: const Color.fromARGB(0, 255, 255, 255),
+          title: const GaugeTitle(text: "Current speed"),
           axes: <RadialAxis>[
             RadialAxis(
               startAngle: 90, //180, //90
@@ -31,7 +31,7 @@ class GaugeWidget extends StatelessWidget {
                       const Color.fromARGB(255, 255, 216, 21),
                       Colors.redAccent.shade400,
                     ],
-                    stops: [
+                    stops: const [
                       0.0,
                       0.5,
                       1.0

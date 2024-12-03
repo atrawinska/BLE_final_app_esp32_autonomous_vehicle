@@ -9,7 +9,15 @@ import "widgets.dart";
 import 'boxes.dart';
 import 'batteryrow.dart';
 
+int dataType = 0;
 int printValue = 0;
+int Red = 0;
+int Green = 0;
+int Blue = 0;
+int DistanceCm1 = 0;
+int DistanceCm2 = 0;
+int isObject = 1;
+
 
 void main() {
   runApp(const MyApp());
@@ -27,6 +35,8 @@ class MyApp extends StatelessWidget {
 }
 
 class PairedDevicesScreen extends StatefulWidget {
+  const PairedDevicesScreen({super.key});
+
   @override
   _PairedDevicesScreenState createState() => _PairedDevicesScreenState();
 }
@@ -109,6 +119,9 @@ class _PairedDevicesScreenState extends State<PairedDevicesScreen> {
   }
 }
 
+
+
+
 //the other screen
 
 class DeviceDetailsScreen extends StatefulWidget {
@@ -122,7 +135,7 @@ class DeviceDetailsScreen extends StatefulWidget {
 
 class _DeviceDetailsScreenState extends State<DeviceDetailsScreen> {
   BluetoothCharacteristic? _rxCharacteristic;
-  List<String> _receivedData = [];
+  final List<String> _receivedData = [];
 
   var lastData = '';
   bool _isConnecting = true;
@@ -151,14 +164,21 @@ class _DeviceDetailsScreenState extends State<DeviceDetailsScreen> {
           // Set up a listener to receive data
           _rxCharacteristic!.lastValueStream.listen((value) {
             setState(() {
-              if (value.length == 4) {
-                printValue = value[0] |
-                    (value[1] << 8) |
-                    (value[2] << 16) |
-                    (value[3] << 24);
+              if (value.length == 7) {
+                dataType = value[0];
+                DistanceCm1 = value[1];
+                DistanceCm2 = value[2];
+                Red = value[3];
+                Green = value[4];
+                Blue = value [5];
+                isObject = value[6];
+                 print("Received Data: $DistanceCm1, $DistanceCm2, $Red, $Green, $Blue, $isObject");
+                
               }
+              List<int> data = [DistanceCm1, DistanceCm2, Red, Green, Blue, isObject];
+              data.forEach((value)=> _receivedData.add(value.toString()));
 
-              _receivedData.add((printValue).toString());
+              //_receivedData.a(DistanceCm1, DistanceCm2, Red, Green, Blue, isObject);
             });
           });
 
@@ -193,10 +213,13 @@ class _DeviceDetailsScreenState extends State<DeviceDetailsScreen> {
                   child: Column(
                     children: [          
 
-                      RowWidget(printValue, printValue, printValue),  
-                      RowBattery(printValue),          
+                      RowWidget(DistanceCm1.toString(), DistanceCm2.toString(), Color.fromARGB(255, Red, Green, Blue)),  
+                      RowBattery(DistanceCm1),          
                       
-                      GaugeWidget(printValue.toDouble()),
+                      GaugeWidget(DistanceCm1.toDouble()),
+                      Text(
+                         "Received Data: $DistanceCm1, $DistanceCm2, $Red, $Green, $Blue, $isObject",
+                      )
                       
                       //here put other code to the column
                     ],

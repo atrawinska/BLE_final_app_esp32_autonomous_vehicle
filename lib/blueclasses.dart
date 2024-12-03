@@ -69,7 +69,7 @@ class ScanBlue {
     await FlutterBluePlus.startScan(
       withServices: [Guid("180D")], // Match any of the specified services
       withNames: ["Bluno"], // Or match any of the specified names
-      timeout: Duration(seconds: 15),
+      timeout: const Duration(seconds: 15),
     );
 
     // Wait for scanning to stop
