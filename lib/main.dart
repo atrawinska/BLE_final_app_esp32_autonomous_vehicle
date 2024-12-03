@@ -201,6 +201,9 @@ class _DeviceDetailsScreenState extends State<DeviceDetailsScreen> {
   }
 
 
+  
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

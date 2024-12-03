@@ -5,9 +5,12 @@ import 'package:percent_indicator/percent_indicator.dart';
 
 ///Battery box indicator with a battery icon
 class BatteryWidget extends StatelessWidget {
-  BatteryWidget(printValue, {super.key});
+  BatteryWidget(this.value, {super.key});
 
-  double printValue = 0;
+  int value = 0;
+ 
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +32,7 @@ class BatteryWidget extends StatelessWidget {
       barRadius: const Radius.circular(10),
 
       ///change to battery value
-      percent: printValue / 10 > 1 ? printValue / 100 : printValue / 10,
+      percent: value.toDouble(),
       animationDuration: 500,
       animateFromLastPercent: true,
       lineHeight: 50,
@@ -56,9 +59,10 @@ class BatteryWidget extends StatelessWidget {
 
 ///Text to display the battery percentage
 class BatteryText extends StatelessWidget {
-  BatteryText(printValue, {super.key});
+
 
   int printValue = 0;
+  BatteryText(this.printValue, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -75,9 +79,10 @@ class BatteryText extends StatelessWidget {
 }
 
 class RowBattery extends StatelessWidget{
-RowBattery(printValue, {super.key});
 
-int? printValue;
+int printValue;
+RowBattery(this.printValue, {super.key});
+
 
 @override
   Widget build(BuildContext context) {
@@ -104,4 +109,12 @@ int? printValue;
 
 
 
+}
+
+double calculateBatteryPercent(int value){
+
+
+  double percentage = 80.0;
+
+  return percentage;
 }
