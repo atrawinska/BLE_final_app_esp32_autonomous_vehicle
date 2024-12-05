@@ -172,7 +172,7 @@ class _DeviceDetailsScreenState extends State<DeviceDetailsScreen> {
                 Green = value[4];
                 Blue = value [5];
                 isObject = value[6];
-                 print("Received Data: $DistanceCm1, $DistanceCm2, $Red, $Green, $Blue, $isObject");
+                 print("Received Data: $dataType $DistanceCm1, $DistanceCm2, $Red, $Green, $Blue, $isObject");
                 
               }
               List<int> data = [DistanceCm1, DistanceCm2, Red, Green, Blue, isObject];
@@ -200,12 +200,35 @@ class _DeviceDetailsScreenState extends State<DeviceDetailsScreen> {
     super.dispose();
   }
 
+Future<void> sendData(List<int> data) async{
+
+//List<int> data = [0x00];
+  if(_rxCharacteristic != null){
+
+    try{
+
+     await _rxCharacteristic!.write(data);
+      print("Value sent");
+
+
+
+
+    }
+    catch (e){
+      print("Error $e");
+    }
+
+  }
+
+
+}
 
   
 
 
   @override
   Widget build(BuildContext context) {
+   bool isSwitched = false;
     return Scaffold(
       appBar: AppBar(title: Text("Device: ${widget.device.platformName}")),
       body: _isConnecting
@@ -222,6 +245,33 @@ class _DeviceDetailsScreenState extends State<DeviceDetailsScreen> {
                       GaugeWidget(DistanceCm1.toDouble()),
                       Text(
                          "Received Data: $DistanceCm1, $DistanceCm2, $Red, $Green, $Blue, $isObject",
+                      ),
+
+                      Padding(padding: EdgeInsets.all(10) ,
+                      child: 
+
+                      Switch(
+                        value: isSwitched,
+                       onChanged: (value)async{
+                        setState(() {
+                          isSwitched = value;
+                          
+                        });
+                        List<int> data;
+                        if(isSwitched==true){
+                          data = [0x01];
+                        }
+                        else data = [0x02];
+                        await sendData(data);
+
+                       }
+                       
+
+                       
+                       )
+                      ,
+                      
+                      
                       )
                       
                       //here put other code to the column
