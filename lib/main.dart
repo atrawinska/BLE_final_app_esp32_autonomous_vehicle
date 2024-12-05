@@ -225,10 +225,10 @@ Future<void> sendData(List<int> data) async{
 
   
 
+   bool isSwitched = false;
 
   @override
   Widget build(BuildContext context) {
-   bool isSwitched = false;
     return Scaffold(
       appBar: AppBar(title: Text("Device: ${widget.device.platformName}")),
       body: _isConnecting
@@ -240,7 +240,7 @@ Future<void> sendData(List<int> data) async{
                     children: [          
 
                       RowWidget(DistanceCm1.toString(), DistanceCm2.toString(), Color.fromARGB(255, Red, Green, Blue)),  
-                      RowBattery(DistanceCm1),          
+                      RowBattery(0),          
                       
                       GaugeWidget(DistanceCm1.toDouble()),
                       Text(
@@ -250,28 +250,37 @@ Future<void> sendData(List<int> data) async{
                       Padding(padding: EdgeInsets.all(10) ,
                       child: 
 
+                      
+
                       Switch(
                         value: isSwitched,
-                       onChanged: (value)async{
-                        setState(() {
-                          isSwitched = value;
-                          
-                        });
-                        List<int> data;
+                       onChanged: (value) async{
+                        
+                        
+                        List<int> data = [0x00];
                         if(isSwitched==true){
+                          
                           data = [0x01];
                         }
-                        else if(isSwitched==false) {data = [0x02];
+                        else if(isSwitched==false) {data = [0x02]; }
                         
                         try{
-                        await sendData(data);}
+                         await sendData(data);
+                         
+                         setState(() {
+                          isSwitched = value;
+                          print("New value: $isSwitched");
+                          
+                        });
+                        print("New value after state: $isSwitched");
+                        }
                         catch(e){
                           print("An error $e has occured");
                           setState(() {
                             isSwitched = !value; // Revert if there's an error
                           });
                         }
-                        }
+                        
 
                        }
                        
@@ -281,7 +290,8 @@ Future<void> sendData(List<int> data) async{
                       ,
                       
                       
-                      )
+                      ),
+
                       
                       //here put other code to the column
                     ],
@@ -290,3 +300,5 @@ Future<void> sendData(List<int> data) async{
     );
   }
 }
+
+
