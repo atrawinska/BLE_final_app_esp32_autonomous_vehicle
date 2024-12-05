@@ -261,8 +261,17 @@ Future<void> sendData(List<int> data) async{
                         if(isSwitched==true){
                           data = [0x01];
                         }
-                        else data = [0x02];
-                        await sendData(data);
+                        else if(isSwitched==false) {data = [0x02];
+                        
+                        try{
+                        await sendData(data);}
+                        catch(e){
+                          print("An error $e has occured");
+                          setState(() {
+                            isSwitched = !value; // Revert if there's an error
+                          });
+                        }
+                        }
 
                        }
                        
