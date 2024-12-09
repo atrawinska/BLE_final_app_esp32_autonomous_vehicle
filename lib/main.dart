@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'dart:convert'; 
+import 'elements.dart';
+import 'switch_widget.dart';
+import 'gauges.dart';
+//import 'package:flutter_blue_plus_windows/flutter_blue_plus_windows.dart';
+
 
 
 
@@ -9,14 +14,16 @@ import "widgets.dart";
 import 'boxes.dart';
 import 'batteryrow.dart';
 
+//data to receive
 int dataType = 0;
-int printValue = 0;
 int Red = 0;
 int Green = 0;
 int Blue = 0;
 int DistanceCm1 = 0;
 int DistanceCm2 = 0;
-int isObject = 1;
+int speedValue = 0;
+int batteryFactor = 0; //it will be initially multiplied by 10
+int servoDegrees = 90;
 
 
 void main() {
@@ -29,6 +36,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 255, 255, 255)),
+      ),
       home: PairedDevicesScreen(),
     );
   }
@@ -96,8 +106,13 @@ class _PairedDevicesScreenState extends State<PairedDevicesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Paired Bluetooth Devices")),
-      body: _isLoading
+      backgroundColor: Color.fromARGB(255, 255, 255, 255),
+      appBar: AppBar(title: CustomText("Paired Bluetooth Devices", size: 23, ownColor: customBlack,), backgroundColor: customWhite,  centerTitle: true, ),
+      body: 
+      
+      
+      
+      _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _pairedDevices.isEmpty
               ? const Center(child: Text("No paired devices found."))
@@ -105,14 +120,29 @@ class _PairedDevicesScreenState extends State<PairedDevicesScreen> {
                   itemCount: _pairedDevices.length,
                   itemBuilder: (context, index) {
                     BluetoothDevice device = _pairedDevices[index];
-                    return ListTile(
-                      title: Text(device.platformName.isNotEmpty
-                          ? device.platformName
-                          : "Unknown Device"),
-                      subtitle: Text("ID: ${device.remoteId}"),
-                      trailing: const Icon(Icons.bluetooth_connected),
+                     return Card(
+                    elevation: 4, // Adds shadow for box effect
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 8), // Margin between cards
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12), // Rounded corners
+                    ),
+                    child: ListTile(
+                      tileColor: customBlue,
+                      shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(12), // Rounded corners
+  ),
+                      title: CustomText(
+                        (device.platformName.isNotEmpty? device.platformName : "Unknown Device"), size: 15,
+                            ownColor: Color.fromARGB(255, 255, 255, 255),
+                          
+                      ),
+                     
+                      trailing: const Icon(Icons.bluetooth_connected, color: Color.fromARGB(255, 255, 255, 255) ),
                       onTap: () => _connectToDevice(device),
-                    );
+                    ),
+                  );      
+
                   },
                 ),
     );
@@ -171,11 +201,14 @@ class _DeviceDetailsScreenState extends State<DeviceDetailsScreen> {
                 Red = value[3];
                 Green = value[4];
                 Blue = value [5];
-                isObject = value[6];
-                 print("Received Data: $dataType $DistanceCm1, $DistanceCm2, $Red, $Green, $Blue, $isObject");
+                speedValue = value[6]; //IR
+                //batteryFactor = value[7];
+               // motorSpeed = value[8];
+                ///servoDegrees = value[9];
+                 print("Received Data: $dataType $DistanceCm1, $DistanceCm2, $Red, $Green, $Blue, $speedValue");
                 
               }
-              List<int> data = [DistanceCm1, DistanceCm2, Red, Green, Blue, isObject];
+              List<int> data = [DistanceCm1, DistanceCm2, Red, Green, Blue, speedValue];
               data.forEach((value)=> _receivedData.add(value.toString()));
 
               //_receivedData.a(DistanceCm1, DistanceCm2, Red, Green, Blue, isObject);
@@ -230,75 +263,90 @@ Future<void> sendData(List<int> data) async{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Device: ${widget.device.platformName}")),
+      appBar: AppBar(title: CustomText("Device: ${widget.device.platformName}", size: 22, ownColor: customBlack,), centerTitle: false,),
       body: _isConnecting
           ? const Center(child: CircularProgressIndicator())
           : !_isConnected
               ? const Center(child: Text("Failed to connect to the device."))
               : Center(
-                  child: Column(
-                    children: [          
+                  child: 
+                  
+                  SingleChildScrollView( child: 
+                  Column( 
+                    mainAxisSize: MainAxisSize.min,
+                    children: [       
 
+                      CustomSwitch(onSendData: sendData), 
+                      SizedBox(height: 20),
+                      BatteryWidget(0),   
                       RowWidget(DistanceCm1.toString(), DistanceCm2.toString(), Color.fromARGB(255, Red, Green, Blue)),  
-                      RowBattery(0),          
-                      
-                      GaugeWidget(DistanceCm1.toDouble()),
-                      Text(
-                         "Received Data: $DistanceCm1, $DistanceCm2, $Red, $Green, $Blue, $isObject",
-                      ),
+                            
+                      FullGaugeWidget(speedValue.toDouble()),
+                      // GaugeWidget(DistanceCm1.toDouble()),
+                      // Text(
+                      //    "Received Data: $DistanceCm1, $DistanceCm2, $Red, $Green, $Blue, $isObject",
+                      // ),
 
-                      Padding(padding: EdgeInsets.all(10) ,
-                      child: 
-
-                      
-
-                      Switch(
-                        value: isSwitched,
-                       onChanged: (value) async{
-                        
-                        
-                        List<int> data = [0x00];
-                        if(isSwitched==true){
-                          
-                          data = [0x01];
-                        }
-                        else if(isSwitched==false) {data = [0x02]; }
-                        
-                        try{
-                         await sendData(data);
-                         
-                         setState(() {
-                          isSwitched = value;
-                          print("New value: $isSwitched");
-                          
-                        });
-                        print("New value after state: $isSwitched");
-                        }
-                        catch(e){
-                          print("An error $e has occured");
-                          setState(() {
-                            isSwitched = !value; // Revert if there's an error
-                          });
-                        }
-                        
-
-                       }
-                       
-
-                       
-                       )
-                      ,
-                      
-                      
-                      ),
+                
+                    
 
                       
                       //here put other code to the column
+                     // const Spacer(),
+                      QuestionElevatedButton(),
                     ],
+                   
+                  ),
                   ),
                 ),
     );
   }
 }
 
+
+//.altenative code for switch - works:
+      // Padding(padding: EdgeInsets.all(10) ,
+                      // child: 
+
+                      
+
+                      // Switch(
+                      //   value: isSwitched,
+                      //  onChanged: (value) async{
+                        
+                        
+                      //   List<int> data = [0x00];
+                      //   if(isSwitched==true){
+                          
+                      //     data = [0x01];
+                      //   }
+                      //   else if(isSwitched==false) {data = [0x02]; }
+                        
+                      //   try{
+                      //    await sendData(data);
+                         
+                      //    setState(() {
+                      //     isSwitched = value;
+                      //     print("New value: $isSwitched");
+                          
+                      //   });
+                      //   print("New value after state: $isSwitched");
+                      //   }
+                      //   catch(e){
+                      //     print("An error $e has occured");
+                      //     setState(() {
+                      //       isSwitched = !value; // Revert if there's an error
+                      //     });
+                      //   }
+                        
+
+                      //  }
+                       
+
+                       
+                      //  )
+                      // ,
+                      
+                      
+                      // ),
 

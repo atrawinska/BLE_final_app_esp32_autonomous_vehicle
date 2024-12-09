@@ -47,5 +47,65 @@ class GaugeWidget extends StatelessWidget {
     );
   }
 }
+//linear gauge
 
+
+
+class CustomGauge extends StatelessWidget{
+ CustomGauge({super.key});
+
+ @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Padding(padding: EdgeInsets.all(10),
+    child: 
+
+
+      SfLinearGauge(
+
+         
+ minimum: 0.0,
+  maximum: 100.0,
+  interval: 20 ,
+ ranges: [],
+barPointers: [],
+  markerPointers: [],
+orientation: LinearGaugeOrientation.horizontal,
+  isAxisInversed: false,
+
+  animateAxis: false,
+animateRange: false,
+
+animationDuration: 1000,
+showLabels : true,
+showAxisTrack : true,
+showTicks : true,
+minorTicksPerInterval : 1,
+useRangeColorForAxis: false,
+axisTrackExtent: 0,
+labelPosition: LinearLabelPosition.inside,
+
+
+
+
+      ),
+
+
+
+
+
+
+
+
+    
+
+
+    );
+  }
+
+
+
+
+
+}
 
