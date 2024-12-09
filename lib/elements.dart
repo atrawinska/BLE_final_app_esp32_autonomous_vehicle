@@ -12,7 +12,7 @@ import 'package:google_fonts/google_fonts.dart';
 ///
 
 Color customBlue = Color.fromARGB(255, 67, 117, 226);
-Color customYellow = Color.fromARGB(255, 255, 255, 77);
+Color customYellow = Color.fromARGB(255, 224, 224, 94);
 Color customRed = Color.fromARGB(255, 255, 107, 109);
 Color customGreen = Color.fromARGB(255, 50, 196, 27);
 Color customBlack = Color.fromARGB(255, 0, 0, 0);
@@ -27,18 +27,21 @@ class CustomText extends StatelessWidget{
   double size = 10.0;
   Color ownColor ;
   FontWeight ownFontWeight;
-CustomText(this.words, {this.size = 10.0,this.ownColor = Colors.white, this.ownFontWeight = FontWeight.w600, super.key});
+  TextAlign alignText;
+CustomText(this.words, {this.size = 10.0,this.ownColor = Colors.white, this.ownFontWeight = FontWeight.w600, this.alignText = TextAlign.center, super.key});
 
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
    return Text(
+    textAlign: alignText,
     "$words",
     style: GoogleFonts.nunito(
         color: ownColor,
         fontSize: size, // Adjust the font size as needed
         fontWeight: ownFontWeight, // Optional: Adjust weight (normal, bold, etc.)
+
       ),
 
    );
@@ -48,7 +51,8 @@ CustomText(this.words, {this.size = 10.0,this.ownColor = Colors.white, this.ownF
 
 class QuestionElevatedButton extends StatelessWidget{
 
-  QuestionElevatedButton({super.key});
+String text = '';
+  QuestionElevatedButton(this.text, {super.key});
 
   @override
   Widget build(BuildContext context){
@@ -81,7 +85,45 @@ class QuestionElevatedButton extends StatelessWidget{
 
     
 
-    onPressed: (){},
+  onPressed: () {
+            // Show bottom sheet on button press
+            showModalBottomSheet(
+              context: context,
+              builder: (context) {
+                return Container(
+                  height: 600, // Set the height of the bottom sheet
+                 
+                  decoration: BoxDecoration(
+
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                    color: customBlue,
+
+
+
+
+                  ),
+                  child: Container( margin: EdgeInsets.all(10),
+                    
+                    child: Column( children: [
+                       SizedBox(height: 20),
+                    CustomText( "Help",
+                    ownColor: customWhite, size: 23,
+                    ),
+                    SizedBox(height: 20),
+
+                    CustomText( text,
+                    ownColor: customWhite, size: 20,
+                    ),
+
+
+                  ],
+
+
+
+                  ) )
+                );
+              },);
+  }
 
 
     ),

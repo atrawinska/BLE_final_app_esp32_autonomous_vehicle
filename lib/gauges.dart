@@ -38,26 +38,26 @@ class SpeedGauge extends StatelessWidget {
             showPrimaryRulers: false,
           ),
           start: -1.6,
-          end: 30,
+          end: 31.5,
           rangeLinearGauge: [
             RangeLinearGauge(
               borderRadius: 10,
               edgeStyle: LinearEdgeStyle.startCurve,
               start: -1.6,
               end: 10.0,
-              color: const Color.fromARGB(255, 54, 86, 251),
+              color: customBlue,
             ),
             RangeLinearGauge(
               start: 10.0,
               end: 20.0,
-              color: const Color.fromARGB(255, 240, 218, 143),
+              color: customYellow,
             ),
             RangeLinearGauge(
               edgeStyle: LinearEdgeStyle.endCurve,
               borderRadius: 10,
               start: 20.0,
-              end: 30.0,
-              color: const Color.fromARGB(255, 250, 104, 114),
+              end: 31.5,
+              color: customRed,
             ),
           ],
         ));
@@ -94,12 +94,11 @@ class FullGaugeWidget extends StatelessWidget {
 }
 
 class ServoMeter extends StatelessWidget {
-  ServoMeter({super.key});
+  const ServoMeter({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return Container(
+        return Container(
       alignment: Alignment.center,
         width: 35,
        height: 35,

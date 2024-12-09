@@ -4,7 +4,10 @@ import 'dart:convert';
 import 'elements.dart';
 import 'switch_widget.dart';
 import 'gauges.dart';
+import 'navigation_bar.dart';
+import 'battery_calculate.dart';
 //import 'package:flutter_blue_plus_windows/flutter_blue_plus_windows.dart';
+
 
 
 
@@ -107,13 +110,23 @@ class _PairedDevicesScreenState extends State<PairedDevicesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 255, 255, 255),
+       
       appBar: AppBar(title: CustomText("Paired Bluetooth Devices", size: 23, ownColor: customBlack,), backgroundColor: customWhite,  centerTitle: true, ),
-      body: 
+      body: Container( child: 
       
       
       
       _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+
+            CircularProgressIndicator(color: customBlue,),
+              SizedBox(height: 20),            
+             CustomText("Remember to pair with a desired device through your phone's settings.", size: 15, ownColor: customBlue, ownFontWeight: FontWeight.bold,),
+
+
+          ],)) 
           : _pairedDevices.isEmpty
               ? const Center(child: Text("No paired devices found."))
               : ListView.builder(
@@ -144,7 +157,8 @@ class _PairedDevicesScreenState extends State<PairedDevicesScreen> {
                   );      
 
                   },
-                ),
+                ),),
+                bottomNavigationBar:  CustomNavigationBar("1. First ensure if you have paired with the autonomous vehicle in your device's settings.\n2.Now, it should be visible in the list of paired devices.\n3.Click the autonomous vehicle.\n4.Control and see its readings! "),
     );
   }
 }
@@ -219,7 +233,7 @@ class _DeviceDetailsScreenState extends State<DeviceDetailsScreen> {
         }
       }
     } catch (e) {
-      print("Error connecting to device: $e");
+      print("Error connecting to device: $e, try again");
     } finally {
       setState(() => _isConnecting = false);
     }
@@ -263,11 +277,11 @@ Future<void> sendData(List<int> data) async{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: CustomText("Device: ${widget.device.platformName}", size: 22, ownColor: customBlack,), centerTitle: false,),
+      appBar: AppBar(title: CustomText("Device: ${widget.device.platformName}", size: 23, ownColor: customBlack,), centerTitle: false,),
       body: _isConnecting
-          ? const Center(child: CircularProgressIndicator())
+          ?  Center(child: CircularProgressIndicator( color: customBlue))
           : !_isConnected
-              ? const Center(child: Text("Failed to connect to the device."))
+              ? Center(child: CustomText("Failed to connect to the device. Try again",))
               : Center(
                   child: 
                   
@@ -277,10 +291,11 @@ Future<void> sendData(List<int> data) async{
                     children: [       
 
                       CustomSwitch(onSendData: sendData), 
-                      SizedBox(height: 20),
-                      BatteryWidget(0),   
+                      SizedBox(height: 50),
+                      BatteryWidget(CalculateBatteryPercentage(batteryFactor)),   
+                      SizedBox(height: 30),
                       RowWidget(DistanceCm1.toString(), DistanceCm2.toString(), Color.fromARGB(255, Red, Green, Blue)),  
-                            
+                            SizedBox(height: 20),
                       FullGaugeWidget(speedValue.toDouble()),
                       // GaugeWidget(DistanceCm1.toDouble()),
                       // Text(
@@ -293,12 +308,13 @@ Future<void> sendData(List<int> data) async{
                       
                       //here put other code to the column
                      // const Spacer(),
-                      QuestionElevatedButton(),
+                     // QuestionElevatedButton(),
                     ],
                    
                   ),
                   ),
                 ),
+                bottomNavigationBar: CustomNavigationBar("First, you can turn on and off the main motor,\nthen you can see its battery's percentage,\nbelow how far away it is from detected objects and a color it detects,\nand then also its speed."),
     );
   }
 }

@@ -35,6 +35,7 @@ ColorBox(this.color, {super.key});
         child: Icon(
               Icons.palette_outlined, //change color to ??
               color: isDarkColor() ? customWhite : customBlack,
+              size: 35,
             ),
       ),
     );

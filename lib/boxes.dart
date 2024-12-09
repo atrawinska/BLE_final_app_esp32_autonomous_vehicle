@@ -8,9 +8,9 @@ class DefaultBox extends StatelessWidget {
   String? printValue;
   Color color = customBlue;
 
-  IconData ownIcon = Icons.favorite_border;
+  IconData ownIcon = Icons.arrow_back_sharp;
 
-  DefaultBox(this.printValue, this.color, this.ownIcon, {super.key});
+  DefaultBox(this.printValue, this.color, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,15 +30,34 @@ class DefaultBox extends StatelessWidget {
         child: Column(
           children: [
 //put text and icon
+Row( mainAxisAlignment: MainAxisAlignment.center,
+mainAxisSize: MainAxisSize.min,
+  children: [
 
-            Icon(
+  Icon(
               ownIcon,
               color: customWhite,
+              size: 25,
               
             ),
-            SizedBox(width: 15), // This will add horizontal space (10px)
 
-            CustomText(printValue.toString(), size: 15),
+
+  Transform.rotate(
+          angle: 3.14159 * 180 / 180,
+          child:  Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+            size: 25,
+          ),
+        ),
+
+  
+],),
+
+            
+            SizedBox(height: 10), // This will add horizontal space (10px)
+
+            CustomText(printValue.toString(), size: 20),
            
           ],
         ),
@@ -63,8 +82,8 @@ class RowWidget extends StatelessWidget{
     child: Row( children: [
 
 
-      DefaultBox(printValue1.toString(), currColor, Icons.abc_outlined),  
-      DefaultBox(printValue2.toString(), currColor, Icons.abc_outlined),                    ///1st row with sensor data
+      DefaultBox(printValue1.toString(), currColor),  
+      DefaultBox(printValue2.toString(), currColor),                    ///1st row with sensor data
       ColorBox(currColor),
 
 
